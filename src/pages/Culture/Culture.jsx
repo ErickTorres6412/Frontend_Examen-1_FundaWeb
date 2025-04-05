@@ -4,10 +4,11 @@ import { useCRUD } from '../../hooks/useCRUD';
 import { cultureService } from '../../services/apiService';
 import { Plus } from 'lucide-react';
 import GenericForm from '../../components/common/GenericForm';
+import FilterComponent from '../../components/common/FilterComponent'; // Importamos el nuevo componente
 
 const Culture = () => {
     // Definir las columnas de la tabla
-    const columns = ['ID', 'Nombre', 'Fecha de Modificación'];
+    const columns = ['ID', 'Nombre', 'Fecha de Creacion', 'Fecha de Modificación'];
 
     // Usar el hook CRUD con el servicio de culture y especificar el campo ID
     const {
@@ -24,6 +25,9 @@ const Culture = () => {
     const [showEditForm, setShowEditForm] = useState(false);
     const [currentCulture, setCurrentCulture] = useState(null);
     const [tableData, setTableData] = useState([]);
+    
+    // Estado para los datos filtrados
+    const [filteredData, setFilteredData] = useState([]);
     
     // Obtener la fecha actual en formato YYYY-MM-DD para el input date
     const getCurrentDate = () => {
@@ -79,14 +83,18 @@ const Culture = () => {
                 return {
                     id: culture.cultureId,
                     nombre: culture.name,
-                    modifiedDate: formatDate(culture.modifiedDate)
+                    modifiedDate: formatDate(culture.modifiedDate),
+                    // Guardamos la fecha original para filtrar
+                    rawDate: culture.modifiedDate
                 };
             }).filter(item => item !== null); // Filtrar items nulos
             
             console.log('Datos formateados para tabla:', formattedData);
             setTableData(formattedData);
+            setFilteredData(formattedData); // Inicialmente, los datos filtrados son todos los datos
         } else {
             setTableData([]);
+            setFilteredData([]);
         }
     }, [cultures]);
 
@@ -195,6 +203,42 @@ const Culture = () => {
         setShowEditForm(false);
     };
 
+    // Manejar filtrado
+    const handleFilter = (filters) => {
+        const { searchText, startDate, endDate } = filters;
+        
+        let filtered = [...tableData];
+        
+        // Filtrar por texto (ID o nombre)
+        if (searchText) {
+            const searchLower = searchText.toLowerCase();
+            filtered = filtered.filter(item => 
+                (item.id && item.id.toLowerCase().includes(searchLower)) || 
+                (item.nombre && item.nombre.toLowerCase().includes(searchLower))
+            );
+        }
+        
+        // Filtrar por fecha de inicio
+        if (startDate) {
+            const startDateTime = new Date(startDate).getTime();
+            filtered = filtered.filter(item => {
+                const itemDate = new Date(item.rawDate).getTime();
+                return itemDate >= startDateTime;
+            });
+        }
+        
+        // Filtrar por fecha de fin
+        if (endDate) {
+            const endDateTime = new Date(endDate).getTime() + (24 * 60 * 60 * 1000 - 1); // Fin del día
+            filtered = filtered.filter(item => {
+                const itemDate = new Date(item.rawDate).getTime();
+                return itemDate <= endDateTime;
+            });
+        }
+        
+        setFilteredData(filtered);
+    };
+
     // Renderizado condicional de carga
     if (loading) {
         return <div>Cargando culturas...</div>;
@@ -217,7 +261,6 @@ const Culture = () => {
 
             {showCreateForm && (
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4">Nueva Cultura</h2>
                     <GenericForm
                         initialData={newCultureData}
                         fields={createFormFields}
@@ -229,7 +272,6 @@ const Culture = () => {
 
             {showEditForm && currentCulture && (
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4">Editar Cultura</h2>
                     <GenericForm
                         initialData={{
                             name: currentCulture.nombre,
@@ -243,12 +285,17 @@ const Culture = () => {
             )}
 
             {!showCreateForm && !showEditForm && (
-                <DynamicTable
-                    columns={columns}
-                    data={tableData}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                />
+                <>
+                    {/* Componente de filtros */}
+                    <FilterComponent onFilter={handleFilter} />
+                    
+                    <DynamicTable
+                        columns={columns}
+                        data={filteredData}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
+                </>
             )}
         </div>
     );
