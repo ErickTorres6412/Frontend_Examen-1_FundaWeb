@@ -39,7 +39,7 @@ export default function Dashboard() {
           
           {/* Content */}
           <div className="pt-16 pb-8 px-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Examen Fundamentos de Programación Web</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">EXAMEN 1 FUNDAMENTOS PROGRAMACIÓN WEB</h2>
             <div className="flex items-center text-gray-500 mb-6">
               <span className="bg-blue-100 text-blue-700 font-medium px-3 py-1 rounded-full text-sm">
                 Curso: 4280

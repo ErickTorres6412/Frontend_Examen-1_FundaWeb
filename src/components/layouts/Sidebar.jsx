@@ -24,7 +24,7 @@ const Sidebar = () => {
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
             {!isCompact ? <span className="font-bold text-lg">A</span> : <span className="font-bold text-lg">A</span>}
           </div>
-          {!isCompact && <span className="ml-3 font-bold text-gray-800 text-lg">Examen Funda Web</span>}
+          {!isCompact && <span className="ml-3 font-bold text-gray-800 text-lg">EXAMEN 1</span>}
         </div>
 
         {/* Botón de Dashboard */}

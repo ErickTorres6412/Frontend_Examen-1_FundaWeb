@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from '../components/layouts/Sidebar';
 import Dashboard from '../pages/Dashboard/Dashboard';
-import Empleado from '../pages/Empleado/Empleado';
+import Culture from '../pages/Culture/Culture';
 
 const AppRoutes = () => {
   return (
@@ -14,7 +14,7 @@ const AppRoutes = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             
             {/* Rutas de Pagos */}
-            <Route path="/empleados" element={<Empleado/>} />
+            <Route path="/culture" element={<Culture/>} />
 
 
             {/* Agrega el resto de las rutas según tus módulos */}
